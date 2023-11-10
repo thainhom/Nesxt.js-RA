@@ -9,20 +9,27 @@ import {
   Post,
   Put,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserRequest } from '../requests/create-user.request';
 import { UsersService } from '../providers/users.service';
+import { query } from 'express';
+import { SearchUserRequest } from '../requests/search-user.request';
+import { UpdateUserRequest } from '../requests/update-user.request';
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
   @Get()
-  index(
-    @Query('keyword') keyword: string,
-    @Query('page', ParseIntPipe) page: number,
-    @Query('limit', ParseIntPipe) limit: number,
-  ) {
-    return this.userService.search(keyword, page, limit);
+  // @UsePipes(new ValidationPipe({ transform: true }))
+  index(@Query() searchRequest: SearchUserRequest) {
+    return this.userService.search(
+      searchRequest.keyword,
+      searchRequest.page,
+      searchRequest.limit,
+    );
   }
+
   @Post()
   @HttpCode(201)
   create(@Body() requesBody: CreateUserRequest) {
@@ -30,24 +37,22 @@ export class UsersController {
       requesBody: requesBody,
     };
   }
+
   @Get('/:id')
   show(@Param('id', ParseIntPipe) id: number) {
     return this.userService.find(id);
   }
+
   @Put('/:id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() requesrBody: CreateUserRequest,
+    @Body() requesrBody: UpdateUserRequest,
   ) {
-    return {
-      id: id,
-      requesrBody: requesrBody,
-    };
+    return this.userService.update(id, requesrBody);
   }
+
   @Delete('/:id')
   destroy(@Param('id', ParseIntPipe) id: number) {
-    return {
-      id: id,
-    };
+    return this.userService.delete(id);
   }
 }

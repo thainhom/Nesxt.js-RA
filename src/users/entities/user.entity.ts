@@ -5,4 +5,5 @@ export class User {
   password: string;
   firstName?: string;
   lastName?: string;
+  isDeleted: boolean = false;
 }
