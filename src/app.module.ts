@@ -1,3 +1,4 @@
+import { ProductModule } from './products/product.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -6,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
+    ProductModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: '127.0.0.1',

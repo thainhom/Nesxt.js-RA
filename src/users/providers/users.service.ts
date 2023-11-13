@@ -22,6 +22,10 @@ export class UsersService {
     limit?: number,
   ): Promise<[User[], number]> {
     return await this.userRepository.findAndCount({
+      relations: {
+        profile: true,
+        passwords: true,
+      },
       where: {
         username: ILike(`%${keyword || ''}%`),
       },
