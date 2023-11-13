@@ -1,58 +1,37 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  Query,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { CreateUserRequest } from '../requests/create-user.request';
 import { UsersService } from '../providers/users.service';
-import { query } from 'express';
 import { SearchUserRequest } from '../requests/search-user.request';
 import { UpdateUserRequest } from '../requests/update-user.request';
+
 @Controller('users')
 export class UsersController {
-  constructor(private userService: UsersService) {}
-  @Get()
-  // @UsePipes(new ValidationPipe({ transform: true }))
-  index(@Query() searchRequest: SearchUserRequest) {
-    return this.userService.search(
-      searchRequest.keyword,
-      searchRequest.page,
-      searchRequest.limit,
-    );
-  }
+    constructor(private usersService: UsersService) { }
 
-  @Post()
-  @HttpCode(201)
-  create(@Body() requesBody: CreateUserRequest) {
-    return {
-      requesBody: requesBody,
-    };
-  }
+    @Get()
+    async index(@Query() searchRequest: SearchUserRequest) {
+        return await this.usersService.search(searchRequest.keyword, searchRequest.page, searchRequest.limit);
+    }
 
-  @Get('/:id')
-  show(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.find(id);
-  }
+    @Post()
+    @HttpCode(201)
+    async create(@Body() requestBody: CreateUserRequest) {
+        await this.usersService.create(requestBody);
+    }
 
-  @Put('/:id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() requesrBody: UpdateUserRequest,
-  ) {
-    return this.userService.update(id, requesrBody);
-  }
+    @Get('/:id')
+    async show(@Param('id', ParseIntPipe) id: number) {
+        return await this.usersService.find(id);
+    }
 
-  @Delete('/:id')
-  destroy(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.delete(id);
-  }
+    @Put('/:id')
+    async update(@Param('id', ParseIntPipe) id: number, @Body() requestBody: UpdateUserRequest) {
+        return await this.usersService.update(id, requestBody);
+    }
+
+    @Delete('/:id')
+    @HttpCode(204)
+    async destroy(@Param('id', ParseIntPipe) id: number) {
+        await this.usersService.delete(id);
+    }
 }
