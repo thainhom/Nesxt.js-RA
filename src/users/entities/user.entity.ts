@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserProfile } from './user-profile.entity';
 
 /**
  * https://orkhan.gitbook.io/typeorm/docs/decorator-reference
@@ -42,4 +45,7 @@ export class User {
    */
   @DeleteDateColumn({ name: 'deleted_at', type: 'datetime' })
   deletedAt?: Date;
+
+  @OneToOne(() => UserProfile, (profile: UserProfile) => profile.user)
+  profile: UserProfile;
 }
