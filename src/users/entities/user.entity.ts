@@ -27,20 +27,35 @@ export class User {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
+  @Column({ type: 'varchar', length: 255 })
+  password: string;
+
   @Column({ name: 'first_name', type: 'varchar', length: 50, nullable: true })
   firstName?: string;
 
   @Column({ name: 'last_name', type: 'varchar', length: 50, nullable: true })
   lastName?: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  password: string;
+  @Column({ name: 'role' })
+  role: number;
+
+  @Column({ name: 'avatar', type: 'varchar', length: 300 })
+  avatar?: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   createdAt: Date;
 
+  @Column()
+  created_by_id: number;
+
   @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
   updatedAt: Date;
+
+  @Column()
+  update_by_id: number;
+
+  @Column()
+  api_key: string;
 
   /**
    * NULL: chưa xóa
