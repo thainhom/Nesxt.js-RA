@@ -5,12 +5,12 @@ import { UpdateUserRequest } from '../requests/update-user.request';
 import { UserResponse } from '../responses/user.response';
 import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import { SALT_OR_ROUNDS } from 'src/common/constants';
 
 // Tài liệu: https://docs.nestjs.com/providers#services
 @Injectable()
 export class UsersService {
-  private static users: Array<User> = [];
-
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -25,6 +25,7 @@ export class UsersService {
       relations: {
         profile: true,
         passwords: true,
+        roles: true,
       },
       where: {
         username: ILike(`%${keyword || ''}%`),
@@ -41,7 +42,7 @@ export class UsersService {
     user.email = createUser.email;
     user.firstName = createUser.firstName;
     user.lastName = createUser.lastName;
-    user.password = createUser.password; // TODO: mã hóa
+    user.password = await bcrypt.hash(createUser.password, SALT_OR_ROUNDS);
 
     await this.userRepository.save(user);
   }
@@ -68,7 +69,18 @@ export class UsersService {
       throw new NotFoundException();
     }
 
-    await this.userRepository.update({ id: id }, updateUser);
+    const userToUpdate = { ...updateUser };
+
+    if (userToUpdate.password) {
+      userToUpdate.password = await bcrypt.hash(
+        userToUpdate.password,
+        SALT_OR_ROUNDS,
+      );
+    } else {
+      delete userToUpdate.password;
+    }
+
+    await this.userRepository.update({ id: id }, userToUpdate);
 
     return await this.find(id);
   }

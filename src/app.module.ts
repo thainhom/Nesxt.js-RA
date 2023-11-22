@@ -1,3 +1,6 @@
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/provider/auth.service';
+import { AuthController } from './auth/controller/auth.controller';
 import { ContactModule } from './contacts/contact.module';
 import { ContactService } from './contacts/provider/contact.service';
 import { ContactController } from './contacts/controller/contact.controller';
@@ -8,10 +11,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
-        ContactModule, 
+    AuthModule,
+    ContactModule,
     OrderModule,
     ProductModule,
     TypeOrmModule.forRoot({
@@ -27,8 +32,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
     UsersModule,
   ],
-  controllers: [ContactController, AppController],
+  controllers: [AuthController, ContactController, AppController],
   providers: [
-        ContactService, AppService],
+    AuthService,
+    ContactService,
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
