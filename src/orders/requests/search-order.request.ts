@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, IsPositive, IsString, Max } from 'class-validator';
 
-export class SearchUserRequest {
+export class SearchOrderRequest {
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -11,11 +11,15 @@ export class SearchUserRequest {
   @IsOptional()
   @IsInt()
   @IsPositive()
-  @Max(1000)
+  @Max(500)
   @Transform(({ value }) => parseInt(value))
   limit?: number = 10;
 
   @IsOptional()
   @IsString()
   keyword?: string;
+
+  public getOffset(): number {
+    return (this.page - 1) * this.limit;
+  }
 }

@@ -12,6 +12,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/guards/auth.guard';
 
 @Module({
   imports: [
@@ -32,10 +33,8 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     UsersModule,
   ],
-  controllers: [AuthController, ContactController, AppController],
+  controllers: [],
   providers: [
-    AuthService,
-    ContactService,
     AppService,
     {
       provide: APP_GUARD,

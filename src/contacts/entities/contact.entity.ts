@@ -10,8 +10,8 @@ import {
 export class Contact {
   @PrimaryGeneratedColumn()
   contact_id: number;
-  @Column({ type: 'varchar', length: 50 })
-  full_name: string;
+  @Column({ name: 'full_name', type: 'varchar', length: 50 })
+  fullname: string;
   @Column({ type: 'varchar', length: 50 })
   email: string;
   @Column({ type: 'varchar', length: 500 })

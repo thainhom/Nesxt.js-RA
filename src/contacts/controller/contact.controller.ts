@@ -1,8 +1,55 @@
-/*
-https://docs.nestjs.com/controllers#controllers
-*/
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { ContactService } from '../provider/contact.service';
+import { SearchContactRequest } from '../requests/search-contact.request';
+import { CreateContactRequest } from '../requests/create-contact.request';
+import { UpdateContactRequest } from '../requests/update-contact.request';
 
-import { Controller } from '@nestjs/common';
+@Controller('contacts')
+export class ContactController {
+  constructor(private contactsService: ContactService) {}
 
-@Controller()
-export class ContactController {}
+  @Get()
+  async index(@Query() searchRequest: SearchContactRequest) {
+    return await this.contactsService.search(
+      searchRequest.keyword,
+      searchRequest.page,
+      searchRequest.limit,
+    );
+  }
+
+  @Post()
+  @HttpCode(201)
+  async create(@Body() requestBody: CreateContactRequest) {
+    await this.contactsService.create(requestBody);
+  }
+
+  @Get('/:id')
+  async show(@Param('id', ParseIntPipe) id: number) {
+    return await this.contactsService.find(id);
+  }
+
+  @Put('/:id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() requestBody: UpdateContactRequest,
+  ) {
+    return await this.contactsService.update(id, requestBody);
+  }
+
+  @Delete('/:id')
+  @HttpCode(204)
+  async destroy(@Param('id', ParseIntPipe) id: number) {
+    await this.contactsService.delete(id);
+  }
+}

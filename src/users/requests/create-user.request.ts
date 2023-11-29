@@ -2,9 +2,12 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
+  IsPhoneNumber,
   IsStrongPassword,
   Length,
+  Max,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 
@@ -31,4 +34,17 @@ export class CreateUserRequest {
   @Length(8, 20)
   @IsStrongPassword()
   password: string;
+
+  @IsOptional()
+  @Min(1)
+  @Max(2)
+  gender: number;
+
+  @IsOptional()
+  // @IsPhoneNumber('VN')
+  phoneNumber: string;
+
+  @IsOptional()
+  @MaxLength(255)
+  address: string;
 }

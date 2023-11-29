@@ -1,9 +1,4 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsStrongPassword,
-  Length,
-} from 'class-validator';
+import { IsNotEmpty, IsStrongPassword, Length } from 'class-validator';
 import { UserRole } from '../../users/enums/user-role.enums';
 
 export class LoginRequest {

@@ -9,7 +9,7 @@ import {
 @Entity('products')
 export class Product {
   @PrimaryGeneratedColumn()
-  product_id: number = 0;
+  product_id: number;
 
   @Column({ type: 'varchar', length: 50 })
   sku: string;

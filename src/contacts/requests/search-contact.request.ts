@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsInt, IsOptional, IsPositive, IsString, Max } from 'class-validator';
 
-export class SearchUserRequest {
+export class SearchContactRequest {
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -11,7 +11,7 @@ export class SearchUserRequest {
   @IsOptional()
   @IsInt()
   @IsPositive()
-  @Max(1000)
+  @Max(500)
   @Transform(({ value }) => parseInt(value))
   limit?: number = 10;
 

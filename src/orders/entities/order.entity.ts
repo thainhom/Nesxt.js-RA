@@ -11,17 +11,17 @@ export class Order {
   @PrimaryGeneratedColumn()
   order_id: number;
 
-  @Column({ type: 'varchar', length: 20 })
-  serial_number: string;
+  @Column({ name: 'serial_number', type: 'varchar', length: 20 })
+  serialNumber: number;
 
-  @Column()
-  user_id: number;
+  @Column({ name: 'user_id' })
+  userId: number;
 
-  @CreateDateColumn({ type: 'datetime' })
-  order_at: Date;
+  @CreateDateColumn({ name: 'order_at', type: 'datetime' })
+  orderAt: Date;
 
-  @Column()
-  total_price: number;
+  @Column({ name: 'total_price' })
+  totalPrice: number;
 
   @Column()
   status: number;
