@@ -83,6 +83,7 @@ export class UsersService {
 
     try {
       const user: User = new User();
+      user.avatar = avatarLocation;
       user.username = createUser.username;
       user.email = createUser.email;
       user.firstName = createUser.firstName;

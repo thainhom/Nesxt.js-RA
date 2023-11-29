@@ -1,13 +1,8 @@
 import { AuthModule } from './auth/auth.module';
-import { AuthService } from './auth/provider/auth.service';
-import { AuthController } from './auth/controller/auth.controller';
 import { ContactModule } from './contacts/contact.module';
-import { ContactService } from './contacts/provider/contact.service';
-import { ContactController } from './contacts/controller/contact.controller';
 import { OrderModule } from './orders/order.module';
 import { ProductModule } from './products/product.module';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';

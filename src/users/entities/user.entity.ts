@@ -42,6 +42,8 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
   updatedAt: Date;
+  @Column({ name: 'avatar', type: 'varchar', length: 300, nullable: true })
+  avatar: string;
 
   /**
    * NULL: chưa xóa
