@@ -26,7 +26,7 @@ export class Product {
   @Column({ type: 'varchar', length: 200 })
   description: string;
 
-  @Column({ type: 'varchar', length: 300 })
+  @Column({ type: 'varchar', length: 300, nullable: true })
   image?: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })

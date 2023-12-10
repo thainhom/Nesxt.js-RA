@@ -10,6 +10,7 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
+import { UserRole } from '../enums/user-role.enums';
 
 // https://github.com/typestack/class-validator#validation-decorators
 export class CreateUserRequest {
@@ -24,11 +25,11 @@ export class CreateUserRequest {
 
   @IsOptional()
   @MaxLength(50)
-  firstName: string;
+  firstName?: string;
 
   @IsOptional()
   @MaxLength(50)
-  lastName: string;
+  lastName?: string;
 
   @IsNotEmpty()
   @Length(8, 20)
@@ -49,5 +50,7 @@ export class CreateUserRequest {
   address: string;
   @IsOptional()
   @MaxLength(300)
-  avatar: string;
+  avatar?: string;
+
+  role: UserRole;
 }

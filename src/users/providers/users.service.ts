@@ -14,6 +14,8 @@ import { SALT_OR_ROUNDS } from 'src/common/constants';
 import { UserProfile } from '../entities/user-profile.entity';
 import { getFileExtension } from 'src/utilities/upload.util';
 import * as fs from 'fs';
+import { Pagination } from 'src/utilities/Pagination';
+import { log } from 'console';
 
 // Tài liệu: https://docs.nestjs.com/providers#services
 @Injectable()
@@ -28,24 +30,29 @@ export class UsersService {
     keyword?: string,
     page?: number,
     limit?: number,
-  ): Promise<[User[], number]> {
-    return await this.userRepository.findAndCount({
+  ): Promise<Pagination> {
+    
+
+    const result = await this.userRepository.findAndCount({
       relations: {
         profile: true,
         passwords: true,
         roles: true,
       },
-      where: {
-        username: ILike(`%${keyword || ''}%`),
-      },
+
+      // where: {
+      //   username: ILike(`%${keyword || ''}%`),
+      // },
       order: { id: 'DESC' }, // ORDER BY
       take: 5, // Tương đương LIMIT
       skip: 0, // Tương đương OFFSET
     });
+    return new Pagination(result[1], result[0]);
   }
 
   async create(
     createUser: CreateUserRequest,
+
     avatar: Express.Multer.File,
   ): Promise<void> {
     let originalname: string | null = null;
@@ -70,7 +77,7 @@ export class UsersService {
     if (avatar) {
       const avatarExtension = getFileExtension(originalname);
       avatarPath = `avatar/${createUser.username}.${avatarExtension}`;
-      avatarLocation = `./public/${avatarPath}`;
+      avatarLocation = `${avatarPath}`;
 
       // Ghi file vào thư mục lưu trữ
       fs.writeFileSync(avatarLocation, avatar.buffer);
@@ -88,6 +95,7 @@ export class UsersService {
       user.email = createUser.email;
       user.firstName = createUser.firstName;
       user.lastName = createUser.lastName;
+      user.role = createUser.role;
       user.password = await bcrypt.hash(createUser.password, SALT_OR_ROUNDS);
       await queryRunner.manager.save(user);
 
@@ -110,6 +118,7 @@ export class UsersService {
     } finally {
       await queryRunner.release();
     }
+    
   }
 
   async find(id: number): Promise<UserResponse> {
@@ -158,6 +167,6 @@ export class UsersService {
       throw new NotFoundException();
     }
 
-    this.userRepository.softRemove({ id });
+    this.userRepository.delete({ id });
   }
 }

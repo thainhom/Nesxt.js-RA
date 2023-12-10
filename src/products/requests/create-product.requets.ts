@@ -7,23 +7,27 @@ import {
 } from 'class-validator';
 
 export class CreateProductRequest {
-  @IsNotEmpty()
-  @MaxLength(20)
+  // @IsNotEmpty()
+  // @MaxLength(20)
   sku: string;
 
-  @IsNotEmpty()
-  @MaxLength(50)
+  // @IsNotEmpty()
+  // @MaxLength(50)
   name: string;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   category: string;
 
-  @IsOptional()
-  @MaxLength(50)
+  // @IsOptional()
+  // @MaxLength(50)
   description: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  @IsPositive()
+  // @IsNumber()
+  // @IsNotEmpty()
+  // @IsPositive()
   unit_price: number;
+
+  // @IsNotEmpty()
+  // @MaxLength(300)
+  image?: string;
 }

@@ -46,6 +46,8 @@ export class UsersController {
     @Body() requestBody: CreateUserRequest,
     @UploadedFile() avatar: Express.Multer.File,
   ) {
+
+
     await this.usersService.create(requestBody, avatar);
   }
 
@@ -67,8 +69,7 @@ export class UsersController {
     @UploadedFiles()
     files: { avatar?: Express.Multer.File[]; images?: Express.Multer.File[] },
   ) {
-    console.log('avatar', files.avatar[0]);
-    console.log('images', files.images);
+   
 
     return await this.usersService.update(id, requestBody);
   }

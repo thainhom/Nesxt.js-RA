@@ -13,6 +13,7 @@ import {
 import { UserProfile } from './user-profile.entity';
 import { UserPassword } from './user-password.entity';
 import { Role } from './role.entity';
+import { UserRole } from '../enums/user-role.enums';
 
 /**
  * https://orkhan.gitbook.io/typeorm/docs/decorator-reference
@@ -44,6 +45,8 @@ export class User {
   updatedAt: Date;
   @Column({ name: 'avatar', type: 'varchar', length: 300, nullable: true })
   avatar: string;
+  @Column({ name: 'role' })
+  role: UserRole;
 
   /**
    * NULL: chưa xóa

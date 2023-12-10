@@ -13,11 +13,11 @@ import * as fs from 'fs';
 @Injectable()
 export class ProductsService {
   private static products: Array<Product> = [];
-  private dataSource: DataSource;
 
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    private dataSource: DataSource,
   ) {}
 
   async search(
@@ -40,6 +40,7 @@ export class ProductsService {
   async create(
     createProduct: CreateProductRequest,
     image: Express.Multer.File,
+    authID: number,
   ): Promise<void> {
     let originalname: string | null = null;
     let path: string | null = null;
@@ -69,10 +70,15 @@ export class ProductsService {
     try {
       const product: Product = new Product();
       product.sku = createProduct.sku;
+      console.log('createProduct', createProduct);
+
       product.name = createProduct.name;
       product.category = createProduct.category;
       product.description = createProduct.description;
+      product.image = imagePath;
       product.unit_price = createProduct.unit_price;
+      product.created_by_id = authID;
+      product.updated_by_id = authID;
       await queryRunner.manager.save(product);
 
       await queryRunner.commitTransaction();
