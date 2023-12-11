@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -13,6 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserResponse } from '../../users/responses/user.response';
 import { UserRole } from 'src/users/enums/user-role.enums';
 import { SALT_OR_ROUNDS } from 'src/common/constants';
+import { CreateUserRequest } from 'src/users/requests/create-user.request';
 
 @Injectable()
 export class AuthService {
@@ -67,12 +69,32 @@ export class AuthService {
 
     return authResponse;
   }
-  async register(params): Promise<any> {
+
+  // async register(params): Promise<any> {
+  //   const newUser = new User();
+  //   newUser.username = params.username;
+  //   newUser.email = params.email;
+  //   newUser.password = await bcrypt.hash(params.password, SALT_OR_ROUNDS);
+  //   newUser.role = UserRole.CUSTOMER;
+  //   const user = await this.userRepository.save(newUser);
+
+  //   return { message: 'User created successfully', user };
+  // }
+  async register(createUser: CreateUserRequest): Promise<any> {
+    const isExistEmailOrUsername = await this.userRepository.findOne({
+      where: [{ username: createUser.username }, { email: createUser.email }],
+    });
+
+    if (isExistEmailOrUsername) {
+      throw new BadRequestException('Username or email already exists');
+    }
+
     const newUser = new User();
-    newUser.username = params.username;
-    newUser.email = params.email;
-    newUser.password = await bcrypt.hash(params.password, SALT_OR_ROUNDS);
+    newUser.username = createUser.username;
+    newUser.email = createUser.email;
+    newUser.password = await bcrypt.hash(createUser.password, SALT_OR_ROUNDS);
     newUser.role = UserRole.CUSTOMER;
+
     const user = await this.userRepository.save(newUser);
 
     return { message: 'User created successfully', user };

@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -10,7 +11,7 @@ import {
 export class Contact {
   @PrimaryGeneratedColumn()
   contact_id: number;
-  @Column({ name: 'full_name', type: 'varchar', length: 50 })
+  @Column({ name: 'full_name', type: 'varchar', length: 300 })
   fullname: string;
   @Column({ type: 'varchar', length: 50 })
   email: string;
@@ -26,4 +27,6 @@ export class Contact {
   updated_at: Date;
   @Column()
   updated_by_id: number;
+  @DeleteDateColumn({ name: 'deleted_at', type: 'datetime' })
+  deletedAt?: Date;
 }

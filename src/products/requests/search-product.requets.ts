@@ -13,11 +13,19 @@ export class SearchProductRequest {
   @IsPositive()
   @Max(500)
   @Transform(({ value }) => parseInt(value))
-  limit?: number = 10;
+  limit?: number = 9;
 
   @IsOptional()
   @IsString()
   keyword?: string;
+
+  image?: string;
+
+  orderPrice: string;
+
+  categories: string;
+
+  name: string;
 
   public getOffset(): number {
     return (this.page - 1) * this.limit;

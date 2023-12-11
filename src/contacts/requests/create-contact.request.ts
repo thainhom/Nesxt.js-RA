@@ -1,18 +1,17 @@
 import { IsEmail, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
+import { PrimaryGeneratedColumn } from 'typeorm';
 
 export class CreateContactRequest {
-  @IsNotEmpty()
-  @MaxLength(30)
-  fullname: string;
+  @PrimaryGeneratedColumn()
+  contact_id: number;
 
-  @IsNotEmpty()
+  full_name: string;
+
   @IsEmail()
   email: string;
 
   @IsOptional()
-  @MaxLength(50)
   content?: string;
 
-  @IsNotEmpty()
-  status: number;
+  status?: number;
 }

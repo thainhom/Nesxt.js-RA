@@ -3,15 +3,17 @@ import { CreateProductRequest } from '../requests/create-product.requets';
 import { Product } from '../entities/product.entity';
 import { UpdateProductRequest } from '../requests/update-product.requets';
 import { ProductResponse } from '../response/product.response';
-import { DataSource, ILike, Repository } from 'typeorm';
+import { DataSource, ILike, In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SearchProductRequest } from '../requests/search-product.requets';
 import { getFileExtension } from '../../utilities/upload.util';
 import * as fs from 'fs';
+import { Pagination } from 'src/utilities/Pagination';
 
 // Tài liệu: https://docs.nestjs.com/providers#services
 @Injectable()
 export class ProductsService {
+  [x: string]: any;
   private static products: Array<Product> = [];
 
   constructor(
@@ -20,21 +22,67 @@ export class ProductsService {
     private dataSource: DataSource,
   ) {}
 
-  async search(
-    searchRequest: SearchProductRequest,
-  ): Promise<[ProductResponse[], number]> {
-    const [products, count] = await this.productRepository.findAndCount({
-      where: [
-        { name: ILike(`%${searchRequest.keyword || ''}%`) },
-        { sku: ILike(`%${searchRequest.keyword || ''}%`) },
-        { description: ILike(`%${searchRequest.keyword || ''}%`) },
-      ],
-      order: { product_id: 'DESC' }, // ORDER BY
-      take: searchRequest.limit, // Tương đương LIMIT
-      skip: searchRequest.getOffset(), // Tương đương OFFSET
+  // async search(
+  //   searchRequest: SearchProductRequest,
+  // ): Promise<[ProductResponse[], number]> {
+  //   const [products, count] = await this.productRepository.findAndCount({
+  //     where: [
+  //       { name: ILike(`%${searchRequest.keyword || ''}%`) },
+  //       { sku: ILike(`%${searchRequest.keyword || ''}%`) },
+  //       { description: ILike(`%${searchRequest.keyword || ''}%`) },
+  //     ],
+  //     order: { product_id: 'DESC' }, // ORDER BY
+  //     take: searchRequest.limit, // Tương đương LIMIT
+  //     skip: searchRequest.getOffset(), // Tương đương OFFSET
+  //   });
+
+  //   return [products.map((product) => new ProductResponse(product)), count];
+  // }
+
+  // async search(searchRequest: SearchProductRequest): Promise<Pagination> {
+  //   const result = await this.productRepository.findAndCount({
+  //     where: [
+  //       { name: ILike(`%${searchRequest.keyword || ''}%`) },
+  //       { sku: ILike(`%${searchRequest.keyword || ''}%`) },
+  //       { description: ILike(`%${searchRequest.keyword || ''}%`) },
+  //     ],
+  //     order: { product_id: 'DESC' }, // ORDER BY
+  //     take: searchRequest.limit, // Equivalent to LIMIT
+  //     skip: searchRequest.getOffset(), // Equivalent to OFFSET
+  //   });
+
+  //   return new Pagination(
+  //     result[1],
+  //     result[0].map((product) => new ProductResponse(product)),
+  //   );
+  // }
+
+  async search(params: SearchProductRequest): Promise<Pagination> {
+    const { orderPrice, categories, name, page, limit } = params;
+    let orderBy: { [key: string]: 'ASC' | 'DESC' } = { unit_price: 'ASC' };
+
+    if (orderPrice === 'DESC') {
+      orderBy = { unit_price: 'DESC' };
+    }
+
+    const where: any = {};
+
+    if (name) {
+      where.name = ILike(`%${name}%`);
+    }
+
+    if (categories && categories.length > 0) {
+      where.category = In([categories]);
+    }
+
+    const [products, total] = await this.productRepository.findAndCount({
+      where,
+      order: orderBy,
+      take: limit || 5,
+      skip: (page - 1) * (limit || 5),
     });
 
-    return [products.map((product) => new ProductResponse(product)), count];
+    return new Pagination(total, products);
   }
 
   async create(

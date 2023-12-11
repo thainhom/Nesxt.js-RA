@@ -11,7 +11,7 @@ export class OrderDetails {
   @Column({ name: 'product_id' })
   productId: number;
 
-  @Column({ name: 'sku', type: 'varchar', length: 10, unique: true })
+  @Column({ name: 'sku', type: 'varchar', length: 10, })
   sku: string;
 
   @Column({ name: 'name', type: 'varchar', length: 255 })

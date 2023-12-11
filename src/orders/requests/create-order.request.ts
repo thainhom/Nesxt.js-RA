@@ -1,30 +1,21 @@
-import {
-  IsDate,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsPositive } from 'class-validator';
+import { PrimaryGeneratedColumn } from 'typeorm';
 
 export class CreateOrderRequest {
-  @IsNotEmpty()
-  @IsInt()
-  serialNumber: number;
+  @PrimaryGeneratedColumn()
+  order_id: number;
 
-  @IsNotEmpty()
-  @IsInt()
-  userId: number;
-
-  @IsDate()
-  orderAt: Date;
-
-  @IsInt()
-  @IsNotEmpty()
-  totalPrice: number;
-
-  @IsNotEmpty()
-  status: number;
-
-  @IsOptional()
   note?: string;
+  cart: CreateOrderDetailsRequest[];
+}
+export class CreateOrderDetailsRequest {
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  product_id: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
 }

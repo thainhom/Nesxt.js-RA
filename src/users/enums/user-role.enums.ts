@@ -3,3 +3,4 @@ export enum UserRole {
 
   CUSTOMER = 2,
 }
+

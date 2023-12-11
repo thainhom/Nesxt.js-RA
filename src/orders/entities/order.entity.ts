@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -39,4 +40,7 @@ export class Order {
 
   @Column()
   updated_by_id: number;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'datetime' })
+  deletedAt?: Date;
 }

@@ -13,7 +13,7 @@ export class SearchOrderRequest {
   @IsPositive()
   @Max(500)
   @Transform(({ value }) => parseInt(value))
-  limit?: number = 10;
+  limit?: number = 5;
 
   @IsOptional()
   @IsString()

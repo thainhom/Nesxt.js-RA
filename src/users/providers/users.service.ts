@@ -15,7 +15,6 @@ import { UserProfile } from '../entities/user-profile.entity';
 import { getFileExtension } from 'src/utilities/upload.util';
 import * as fs from 'fs';
 import { Pagination } from 'src/utilities/Pagination';
-import { log } from 'console';
 
 // Tài liệu: https://docs.nestjs.com/providers#services
 @Injectable()
@@ -31,8 +30,6 @@ export class UsersService {
     page?: number,
     limit?: number,
   ): Promise<Pagination> {
-    
-
     const result = await this.userRepository.findAndCount({
       relations: {
         profile: true,
@@ -40,9 +37,9 @@ export class UsersService {
         roles: true,
       },
 
-      // where: {
-      //   username: ILike(`%${keyword || ''}%`),
-      // },
+      where: {
+        username: ILike(`%${keyword || ''}%`),
+      },
       order: { id: 'DESC' }, // ORDER BY
       take: 5, // Tương đương LIMIT
       skip: 0, // Tương đương OFFSET
@@ -118,7 +115,6 @@ export class UsersService {
     } finally {
       await queryRunner.release();
     }
-    
   }
 
   async find(id: number): Promise<UserResponse> {

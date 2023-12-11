@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
 } from '@nestjs/common';
 import { ContactService } from '../provider/contact.service';
 import { SearchContactRequest } from '../requests/search-contact.request';
@@ -30,8 +31,9 @@ export class ContactController {
 
   @Post()
   @HttpCode(201)
-  async create(@Body() requestBody: CreateContactRequest) {
-    await this.contactsService.create(requestBody);
+  async create(@Body() requestBody: CreateContactRequest,
+  @Request() request) {
+    await this.contactsService.create(requestBody,request['user'].sub);
   }
 
   @Get('/:id')

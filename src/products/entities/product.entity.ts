@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -40,4 +41,7 @@ export class Product {
 
   @Column()
   updated_by_id: number;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'datetime' })
+  deletedAt?: Date;
 }
