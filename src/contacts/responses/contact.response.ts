@@ -3,7 +3,7 @@ import { Contact } from '../entities/contact.entity';
 export class ContactResponse {
   contact_id: number;
 
-  fullname: string;
+  full_name: string;
 
   email: string;
 
@@ -13,7 +13,7 @@ export class ContactResponse {
 
   constructor(contact: Contact) {
     this.contact_id = contact.contact_id;
-    this.fullname = contact.fullname;
+    this.full_name = contact.full_name;
     this.email = contact.email;
     this.content = contact.content;
     this.status = contact.status;

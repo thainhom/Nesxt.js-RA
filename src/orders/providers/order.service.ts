@@ -12,13 +12,9 @@ import { DataSource, ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SearchOrderRequest } from '../requests/search-order.request';
 import { Pagination } from 'src/utilities/Pagination';
-import { Connection } from 'mysql2/typings/mysql/lib/Connection';
-import { User } from 'src/users/entities/user.entity';
-import moment from 'moment';
 import { Product } from 'src/products/entities/product.entity';
 import { OrderStatus } from '../enums/order-status.enum';
 import { OrderDetails } from '../entities/order-detail.entity';
-import { of } from 'rxjs';
 
 // Tài liệu: https://docs.nestjs.com/providers#services
 @Injectable()
@@ -31,6 +27,9 @@ export class OrdersService {
     private orderRepository: Repository<Order>,
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+
+    @InjectRepository(OrderDetails)
+    private readonly orderDetailsRepository: Repository<OrderDetails>,
   ) {}
 
   async search(searchRequest: SearchOrderRequest): Promise<Pagination> {
@@ -40,12 +39,17 @@ export class OrdersService {
           note: ILike(`%${searchRequest.keyword || ''}%`),
         },
       ],
+      relations: {
+        user: true,
+        orderDetails: true,
+      },
       order: { order_id: 'DESC' }, // ORDER BY
       take: searchRequest.limit, // Tương đương LIMIT
       skip: searchRequest.getOffset(), // Tương đương OFFSET
     });
+    const orderResponse = result[0].map((order) => new OrderResponse(order));
 
-    return new Pagination(result[1], result[0]);
+    return new Pagination(result[1], orderResponse);
   }
 
   // async create(createOrder: CreateOrderRequest): Promise<void> {
@@ -125,8 +129,6 @@ export class OrdersService {
 
       await queryRunner.commitTransaction();
     } catch (error) {
-      console.log(error);
-
       await queryRunner.rollbackTransaction();
 
       throw new HttpException(
@@ -139,7 +141,15 @@ export class OrdersService {
   }
 
   async find(order_id: number): Promise<OrderResponse> {
-    const order: Order = await this.orderRepository.findOneBy({ order_id });
+    const order: Order = await this.orderRepository.findOne({
+      where: {
+        order_id: order_id,
+      },
+      relations: {
+        user: true,
+        orderDetails: true,
+      },
+    });
 
     // Kiểm tra đơn hàng có tồn tại hay không ?
     if (!order) {
@@ -159,8 +169,13 @@ export class OrdersService {
     if (!order) {
       throw new NotFoundException();
     }
+    const updateOrder = {
+      ...order,
+      status: orderUpdate.status,
+      note: orderUpdate.note,
+    };
 
-    await this.orderRepository.update({ order_id: order_id }, orderUpdate);
+    await this.orderRepository.update({ order_id: order_id }, updateOrder);
 
     return await this.find(order_id);
   }
@@ -174,5 +189,24 @@ export class OrdersService {
     }
 
     this.orderRepository.softRemove({ order_id });
+  }
+  async getOrderDetailsByOrderId(order_id: number): Promise<OrderDetails[]> {
+    return this.orderDetailsRepository.find({ where: { order_id } });
+  }
+
+  async getDetailOrder(id: number): Promise<Order | undefined> {
+    return this.orderRepository.findOne({
+      where: {
+        order_id: id,
+      },
+      relations: {
+        user: true,
+        orderDetails: true,
+      },
+    });
+  }
+
+  async deleteOrderDetail(orderDetailId: number): Promise<void> {
+    await this.orderDetailsRepository.delete(orderDetailId);
   }
 }

@@ -18,4 +18,8 @@ export class SearchContactRequest {
   @IsOptional()
   @IsString()
   keyword?: string;
+
+  public getOffset(): number {
+    return (this.page - 1) * this.limit;
+  }
 }

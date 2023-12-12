@@ -22,18 +22,13 @@ export class ContactController {
 
   @Get()
   async index(@Query() searchRequest: SearchContactRequest) {
-    return await this.contactsService.search(
-      searchRequest.keyword,
-      searchRequest.page,
-      searchRequest.limit,
-    );
+    return await this.contactsService.search(searchRequest);
   }
 
   @Post()
   @HttpCode(201)
-  async create(@Body() requestBody: CreateContactRequest,
-  @Request() request) {
-    await this.contactsService.create(requestBody,request['user'].sub);
+  async create(@Body() requestBody: CreateContactRequest, @Request() request) {
+    await this.contactsService.create(requestBody, request['user'].sub);
   }
 
   @Get('/:id')

@@ -11,22 +11,30 @@ import {
 export class Contact {
   @PrimaryGeneratedColumn()
   contact_id: number;
+
   @Column({ name: 'full_name', type: 'varchar', length: 300 })
-  fullname: string;
+  full_name: string;
+
   @Column({ type: 'varchar', length: 50 })
   email: string;
+
   @Column({ type: 'varchar', length: 500 })
   content: string;
   @Column()
   status: number;
+
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at: Date;
+
   @Column()
   created_by_id: number;
+
   @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
   updated_at: Date;
+
   @Column()
   updated_by_id: number;
+
   @DeleteDateColumn({ name: 'deleted_at', type: 'datetime' })
   deletedAt?: Date;
 }

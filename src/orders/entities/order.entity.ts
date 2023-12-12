@@ -3,9 +3,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { OrderDetails } from './order-detail.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('orders')
 export class Order {
@@ -43,4 +48,14 @@ export class Order {
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'datetime' })
   deletedAt?: Date;
+
+  @OneToMany(
+    () => OrderDetails,
+    (orderDetails: OrderDetails) => orderDetails.order,
+  )
+  orderDetails: OrderDetails[];
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }
